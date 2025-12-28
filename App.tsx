@@ -219,9 +219,9 @@ const App: React.FC = () => {
         <p className="text-green-800 text-lg">Hav det sjovt med at spille skak!</p>
       </header>
 
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Venstre side */}
-        <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-4">
+        <div className="md:col-span-3 order-2 md:order-1 flex flex-col gap-4">
           <GameControls 
             onReset={handleReset} 
             onUndo={handleUndo}
@@ -238,7 +238,7 @@ const App: React.FC = () => {
             hideAutoHints={true}
           />
           
-          <div className="bg-white p-5 rounded-3xl shadow-md border-2 border-green-100 hidden lg:flex flex-col gap-4">
+          <div className="bg-white p-5 rounded-3xl shadow-md border-2 border-green-100 hidden md:flex flex-col gap-4">
             <h4 className="font-bold text-green-700 border-b border-green-100 pb-2">Hvad betyder farverne?</h4>
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 bg-green-400 rounded-full shadow-sm"></div> 
@@ -252,7 +252,7 @@ const App: React.FC = () => {
         </div>
 
         {/* Midten */}
-        <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center gap-4">
+        <div className="md:col-span-6 order-1 md:order-2 flex flex-col items-center gap-4">
           <ChessBoard 
             fen={state.fen} 
             selectedSquare={state.selectedSquare}
@@ -268,15 +268,15 @@ const App: React.FC = () => {
           />
         </div>
 
-        {/* Højre side */}
-        <div className="lg:col-span-3 order-3 flex flex-col gap-4">
+        {/* Højre side - CoachPanel (Ugle hjælpen) */}
+        <div className="md:col-span-3 order-3 flex flex-col gap-4">
           <CoachPanel 
             advice={state.advice}
             isThinking={state.isThinking}
             onGetAdvice={handleGetAdvice}
           />
           
-          <div className="bg-white p-5 rounded-3xl shadow-md border-2 border-blue-100 hidden lg:flex flex-col gap-4">
+          <div className="bg-white p-5 rounded-3xl shadow-md border-2 border-blue-100 hidden md:flex flex-col gap-4">
             <h4 className="font-bold text-blue-700 border-b border-blue-100 pb-2">Hvad siger Uglen?</h4>
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 bg-yellow-400 rounded-md border border-yellow-600 shadow-sm"></div> 
