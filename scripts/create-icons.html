@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .instructions {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Skak App Icon Generator</h1>
+    <div class="instructions">
+        <p><strong>Instruktioner:</strong></p>
+        <ol>
+            <li>Canvas'en nedenfor viser ikonet</li>
+            <li>Klik på "Download 192x192" for at hente icon-192.png</li>
+            <li>Klik på "Download 512x512" for at hente icon-512.png</li>
+            <li>Klik på "Download Favicon" for at hente favicon.ico</li>
+            <li>Placer filerne i <code>public/</code> mappen</li>
+        </ol>
+    </div>
+
+    <canvas id="iconCanvas" width="512" height="512"></canvas>
+    <br>
+    <button onclick="downloadIcon(192)">Download 192x192</button>
+    <button onclick="downloadIcon(512)">Download 512x512</button>
+    <button onclick="downloadFavicon()">Download Favicon (32x32)</button>
+
+    <script>
+        const canvas = document.getElementById('iconCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawIcon(size) {
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Hvid baggrund
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Outline stil - tykke linjer
+            ctx.strokeStyle = '#333333';
+            ctx.fillStyle = 'none';
+            ctx.lineWidth = Math.max(8, size / 64);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const scale = size / 512;
+            
+            // Tårn (Rook) - venstre side
+            const rookX = centerX - size * 0.23;
+            const rookY = centerY;
+            const rookBaseW = 80 * scale;
+            const rookBaseH = 30 * scale;
+            const rookBodyW = 60 * scale;
+            const rookBodyH = 60 * scale;
+            const rookTopW = 70 * scale;
+            const rookTopH = 60 * scale;
+            const crenelSize = 12 * scale;
+            
+            // Tårn base
+            ctx.strokeRect(rookX - rookBaseW/2, rookY + 80*scale, rookBaseW, rookBaseH);
+            
+            // Tårn krop
+            ctx.strokeRect(rookX - rookBodyW/2, rookY + 20*scale, rookBodyW, rookBodyH);
+            
+            // Tårn top
+            ctx.strokeRect(rookX - rookTopW/2, rookY - 40*scale, rookTopW, rookTopH);
+            
+            // Kreneleringer (4 firkantede tinder)
+            const crenelSpacing = (rookTopW - 4 * crenelSize) / 5;
+            let crenelX = rookX - rookTopW/2 + crenelSpacing;
+            for (let i = 0; i < 4; i++) {
+                ctx.strokeRect(crenelX, rookY - 40*scale, crenelSize, crenelSize);
+                crenelX += crenelSize + crenelSpacing;
+            }
+            
+            // Springer (Knight) - højre side, overlapper lidt
+            const knightX = centerX + size * 0.16;
+            const knightY = centerY;
+            const knightBaseW = 80 * scale;
+            const knightBaseH = 30 * scale;
+            const knightBodyR = 35 * scale;
+            const knightBodyRY = 30 * scale;
+            
+            // Springer base
+            ctx.strokeRect(knightX - knightBaseW/2, knightY + 80*scale, knightBaseW, knightBaseH);
+            
+            // Springer krop (oval)
+            ctx.beginPath();
+            ctx.ellipse(knightX, knightY + 50*scale, knightBodyR, knightBodyRY, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Springer hoved (profil, peger mod højre)
+            ctx.beginPath();
+            ctx.moveTo(knightX + 20*scale, knightY + 20*scale);
+            ctx.quadraticCurveTo(knightX + 40*scale, knightY + 10*scale, knightX + 50*scale, knightY);
+            ctx.quadraticCurveTo(knightX + 45*scale, knightY - 15*scale, knightX + 30*scale, knightY - 20*scale);
+            ctx.quadraticCurveTo(knightX + 15*scale, knightY - 15*scale, knightX + 10*scale, knightY);
+            ctx.quadraticCurveTo(knightX + 15*scale, knightY + 10*scale, knightX + 20*scale, knightY + 20*scale);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Springer øje
+            ctx.fillStyle = '#333333';
+            ctx.beginPath();
+            ctx.arc(knightX + 35*scale, knightY - 5*scale, 4*scale, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Springer manke
+            ctx.strokeStyle = '#333333';
+            ctx.beginPath();
+            ctx.moveTo(knightX + 25*scale, knightY - 15*scale);
+            ctx.quadraticCurveTo(knightX + 30*scale, knightY - 25*scale, knightX + 35*scale, knightY - 30*scale);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(knightX + 20*scale, knightY - 10*scale);
+            ctx.quadraticCurveTo(knightX + 25*scale, knightY - 20*scale, knightX + 30*scale, knightY - 25*scale);
+            ctx.stroke();
+        }
+
+        function downloadIcon(size) {
+            drawIcon(size);
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `icon-${size}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function downloadFavicon() {
+            const faviconSize = 32;
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = faviconSize;
+            tempCanvas.height = faviconSize;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            // Tegn ikon
+            drawIcon(faviconSize);
+            tempCtx.drawImage(canvas, 0, 0);
+            
+            // Konverter til ICO format (simplificeret - faktisk ICO kræver binær format)
+            tempCanvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'favicon.ico';
+                a.click();
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+
+        // Tegn standard størrelse ved load
+        drawIcon(512);
+    </script>
+</body>
+</html>
+

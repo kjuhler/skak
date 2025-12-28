@@ -1,0 +1,19 @@
+{
+  "name": "Min Første Skak",
+  "short_name": "Skak",
+  "description": "En skak-app til børn med AI-træner",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0fdf4",
+  "theme_color": "#22c55e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
