@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  skak:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GEMINI_API_KEY=${GEMINI_API_KEY}
+    container_name: skak
+    restart: unless-stopped
+    ports:
+      - "3002:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.skak.rule=Host(`skak.juhler.dk`)"
+      - "traefik.http.routers.skak.entrypoints=web"
+      - "traefik.http.routers.skak.entrypoints=websecure"
+      - "traefik.http.routers.skak.tls.certresolver=letsencrypt"
+      - "traefik.http.services.skak.loadbalancer.server.port=80"
+    networks:
+      - default
+
+networks:
+  default:
+    external: false
+
