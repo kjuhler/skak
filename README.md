@@ -23,21 +23,31 @@ View your app in AI Studio: https://ai.studio/apps/drive/1e5PBAQ5XlqYioUOZ_S717s
 
 **Prerequisites:** Docker og Portainer
 
-1. Opret en `.env` fil i projektets rod med:
-   ```
-   GEMINI_API_KEY=din_api_key_her
-   ```
+### Via GitHub Repository i Portainer:
 
-2. I Portainer:
+1. I Portainer:
    - Gå til **Stacks**
    - Klik **Add stack**
-   - Vælg **Web editor**
-   - Indsæt indholdet fra `docker-compose.yml` (eller `docker-compose.simple.yml` hvis du ikke bruger Traefik)
-   - Sæt environment variable `GEMINI_API_KEY` i Portainer's environment section
-   - Klik **Deploy the stack**
+   - Vælg **Repository** (ikke Web editor)
+   - **Repository URL**: Indtast din GitHub repository URL (f.eks. `https://github.com/brugernavn/skak`)
+   - **Repository reference**: `main` eller `master` (afhænger af din default branch)
+   - **Compose path**: `docker-compose.yml`
+   - **Build method**: Vælg **Build** (Portainer vil bygge fra GitHub)
 
-3. Appen kører på port **3002** (internt port 80)
+2. **Environment Variables**:
+   - Tilføj environment variable: `GEMINI_API_KEY` = `din_api_key_her`
+   - Dette kan gøres i Portainer's environment section når du opretter stacken
 
-4. For at linke `skak.juhler.dk`:
+3. Klik **Deploy the stack**
+
+4. Appen kører på port **3002** (internt port 80)
+
+5. For at linke `skak.juhler.dk`:
    - Hvis du bruger Traefik: Labels i `docker-compose.yml` er allerede konfigureret
    - Hvis du bruger en anden reverse proxy: Konfigurer den til at pege på port 3002
+
+### Alternativ: Lokal build
+
+Hvis du foretrækker at bygge lokalt først:
+1. Opret en `.env` fil i projektets rod med `GEMINI_API_KEY=din_api_key_her`
+2. Brug **Web editor** i Portainer og indsæt indholdet fra `docker-compose.yml`
