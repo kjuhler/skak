@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Min Første Skak
+Comment=Skak-app til børn med AI-træner
+Exec=__INSTALL_DIR__/scripts/skak-kiosk.sh
+Icon=__INSTALL_DIR__/public/icon.svg
+Terminal=false
+Type=Application
+Categories=Game;BoardGame;
+StartupNotify=true

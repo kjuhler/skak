@@ -20,3 +20,22 @@ export const PIECE_ICONS: Record<string, string> = {
 };
 
 export const INITIAL_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+
+export type GridDirection = 'up' | 'down' | 'left' | 'right';
+
+export function gridToSquare(rIdx: number, fIdx: number, orientation: 'w' | 'b'): string {
+  const displayedRanks = orientation === 'w' ? RANKS : [...RANKS].reverse();
+  const displayedFiles = orientation === 'w' ? FILES : [...FILES].reverse();
+  return `${displayedFiles[fIdx]}${displayedRanks[rIdx]}`;
+}
+
+export function moveGrid(rIdx: number, fIdx: number, direction: GridDirection): { rIdx: number; fIdx: number } {
+  switch (direction) {
+    case 'up': return { rIdx: Math.max(0, rIdx - 1), fIdx };
+    case 'down': return { rIdx: Math.min(7, rIdx + 1), fIdx };
+    case 'left': return { rIdx, fIdx: Math.max(0, fIdx - 1) };
+    case 'right': return { rIdx, fIdx: Math.min(7, fIdx + 1) };
+  }
+}
+
+export const DEFAULT_CURSOR = { rIdx: 6, fIdx: 4 };

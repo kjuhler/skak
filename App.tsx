@@ -1,13 +1,15 @@
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { Chess, Square as ChessSquareType, Move as ChessMove } from 'chess.js';
 import ChessBoard from './components/ChessBoard';
 import CoachPanel from './components/CoachPanel';
 import GameControls from './components/GameControls';
-import { INITIAL_FEN } from './constants';
+import ControllerHint from './components/ControllerHint';
+import { INITIAL_FEN, gridToSquare, moveGrid, DEFAULT_CURSOR } from './constants';
 import { AppState, Color, Difficulty } from './types';
 import { getChessAdvice, getOpponentMove } from './services/geminiService';
 import { speak } from './services/speechService';
+import { useGamepad } from './hooks/useGamepad';
 
 const App: React.FC = () => {
   const gameRef = useRef(new Chess());
@@ -27,6 +29,7 @@ const App: React.FC = () => {
     autoHints: false,
     difficulty: 'easy',
   });
+  const [cursor, setCursor] = useState(DEFAULT_CURSOR);
 
   const calculateThreats = useCallback((fen: string) => {
     const fenParts = fen.split(' ');
@@ -210,6 +213,27 @@ const App: React.FC = () => {
 
   const toggleThreats = () => setState(prev => ({ ...prev, showOpponentThreats: !prev.showOpponentThreats }));
 
+  const focusedSquare = useMemo(
+    () => gridToSquare(cursor.rIdx, cursor.fIdx, state.playerColor),
+    [cursor, state.playerColor],
+  );
+
+  const { connected: controllerConnected } = useGamepad({
+    onMove: (direction) => setCursor((prev) => moveGrid(prev.rIdx, prev.fIdx, direction)),
+    onConfirm: () => {
+      if (state.isGameOver) {
+        handleReset();
+        return;
+      }
+      onSquareClick(focusedSquare);
+    },
+    onCancel: () => setState((prev) => ({ ...prev, selectedSquare: null, validMoves: [], advice: null })),
+    onAdvice: handleGetAdvice,
+    onUndo: () => { if (gameRef.current.history().length >= 2) handleUndo(); },
+    onNewGame: () => handleReset(),
+    onToggleThreats: toggleThreats,
+  });
+
   return (
     <div className="min-h-screen p-4 md:p-8 flex flex-col items-center gap-6 overflow-x-hidden">
       <header className="text-center">
@@ -265,6 +289,7 @@ const App: React.FC = () => {
             lastMove={state.lastMove}
             orientation={state.playerColor}
             hideLegend={true}
+            focusedSquare={controllerConnected ? focusedSquare : null}
           />
         </div>
 
@@ -294,6 +319,8 @@ const App: React.FC = () => {
         </div>
       </div>
 
+      <ControllerHint visible={controllerConnected} />
+
       {state.isGameOver && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white p-8 rounded-3xl text-center shadow-2xl transform animate-bounce border-8 border-yellow-400">
@@ -302,6 +329,7 @@ const App: React.FC = () => {
             <button 
               onClick={() => handleReset()}
               className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-10 rounded-full text-2xl transition-all shadow-lg active:scale-95"
+              data-action="play-again"
             >
               Spil Igen!
             </button>

@@ -16,6 +16,7 @@ interface ChessBoardProps {
   lastMove: { from: string; to: string } | null;
   orientation: 'w' | 'b';
   hideLegend?: boolean;
+  focusedSquare?: string | null;
 }
 
 const ChessBoard: React.FC<ChessBoardProps> = ({ 
@@ -29,7 +30,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   advice,
   lastMove,
   orientation,
-  hideLegend = false
+  hideLegend = false,
+  focusedSquare = null,
 }) => {
   const game = new Chess(fen);
   const currentTurn = game.turn();
@@ -58,6 +60,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
             
             const isLastMoveFrom = lastMove?.from === square;
             const isLastMoveTo = lastMove?.to === square;
+            const isFocused = focusedSquare === square;
             
             const isDark = (rIdx + fIdx) % 2 !== 0;
 
@@ -77,6 +80,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 )}
                 {isLastMoveFrom && (
                   <div className="absolute inset-0 bg-blue-200/40 z-0 border-4 border-dashed border-blue-500/60" />
+                )}
+
+                {isFocused && (
+                  <div className="absolute inset-0 z-20 ring-4 ring-orange-400 ring-inset pointer-events-none" />
                 )}
 
                 {isAdviceTo && (

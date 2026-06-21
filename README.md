@@ -51,3 +51,56 @@ View your app in AI Studio: https://ai.studio/apps/drive/1e5PBAQ5XlqYioUOZ_S717s
 Hvis du foretrækker at bygge lokalt først:
 1. Opret en `.env` fil i projektets rod med `GEMINI_API_KEY=din_api_key_her`
 2. Brug **Web editor** i Portainer og indsæt indholdet fra `docker-compose.yml`
+
+## Installér på Linux (Nobara HTPC)
+
+Appen kan køres lokalt på en Linux HTPC med controller-understøttelse (Xbox, PlayStation, Switch Pro m.fl.).
+
+### Hurtig installation
+
+```bash
+git clone https://github.com/brugernavn/skak.git
+cd skak
+cp .env.example .env   # Sæt GEMINI_API_KEY
+chmod +x scripts/*.sh
+./scripts/install-linux.sh
+```
+
+Scriptet installerer Node.js/pnpm (hvis mangler), bygger appen og opretter en systemd-brugerservice der kører på port **3002**.
+
+### Kiosk-tilstand (fuldskærm på TV)
+
+```bash
+./scripts/skak-kiosk.sh
+```
+
+Starter Chromium i fuldskærm mod `http://localhost:3002`.
+
+### Autostart ved login (valgfrit)
+
+```bash
+mkdir -p ~/.config/autostart
+sed "s|__INSTALL_DIR__|$(pwd)|g" scripts/skak.desktop > ~/.config/autostart/skak.desktop
+```
+
+### Controller-styring
+
+| Knap | Handling |
+|------|----------|
+| Venstre stik / D-pad | Flyt markør på brættet |
+| A / ✕ | Vælg felt / bekræft træk |
+| B / ○ | Annuller valg |
+| X / □ | Bed om hjælp fra Uglen |
+| Y / △ | Fortryd træk |
+| LB | Slå farer til/fra |
+| Start | Nyt spil |
+
+**Tip:** Tryk på en controller-knap efter siden er loadet, så browseren aktiverer gamepad-input.
+
+### Nyttige kommandoer
+
+```bash
+systemctl --user status skak
+systemctl --user restart skak
+journalctl --user -u skak -f
+```
